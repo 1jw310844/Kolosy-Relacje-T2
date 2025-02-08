@@ -1,0 +1,6 @@
+﻿  Kolos Zbiory nauka.cpp
+C:\Users\48605\Desktop\Kolosy PK Relacje\Kolos Zbiory nauka\Kolos Zbiory nauka\Kolos Zbiory nauka.cpp(21,9): warning C4267: "argument": konwersja z "size_t" do "int", możliwa utrata danych
+C:\Users\48605\Desktop\Kolosy PK Relacje\Kolos Zbiory nauka\Kolos Zbiory nauka\Kolos Zbiory nauka.cpp(33,13): warning C4267: "argument": konwersja z "size_t" do "int", możliwa utrata danych
+C:\Users\48605\Desktop\Kolosy PK Relacje\Kolos Zbiory nauka\Kolos Zbiory nauka\Kolos Zbiory nauka.cpp(49,32): warning C4267: "argument": konwersja z "size_t" do "int", możliwa utrata danych
+MSVCRTD.lib(exe_main.obj) : error LNK2019: nierozpoznany symbol zewnętrzny main przywołany w funkcji "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)
+C:\Users\48605\Desktop\Kolosy PK Relacje\Kolos Zbiory nauka\x64\Debug\Kolos Zbiory nauka.exe : fatal error LNK1120: liczba nierozpoznanych elementów zewnętrznych: 1
