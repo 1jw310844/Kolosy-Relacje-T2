@@ -1,0 +1,123 @@
+#pragma once
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <cassert>
+#include <random>
+
+class Zbior {
+private:
+    size_t m_liczbaElementow = 0;
+    double* m_elementy = nullptr;
+
+    void alokuj(size_t n) {
+        assert(n > 0);
+        m_elementy = new double[n]{};
+        m_liczbaElementow = n;
+    }
+
+    void zwolnij() {
+        delete[] m_elementy;
+        m_elementy = nullptr;
+        m_liczbaElementow = 0;
+    }
+
+public:
+    Zbior(size_t liczElem, double dGran, double gGran) {
+        alokuj(liczElem);
+        std::uniform_real_distribution<double> zakres(dGran, gGran);
+        std::random_device generator;
+        for (size_t elem = 0; elem < liczElem; elem++) {
+            m_elementy[elem] = zakres(generator);
+        }
+    }
+
+    // Konstruktor kopiujący (głęboka kopia)
+    Zbior(const Zbior& other) {
+        alokuj(other.m_liczbaElementow);
+        std::copy(other.m_elementy, other.m_elementy + other.m_liczbaElementow, m_elementy);
+    }
+
+    // Operator przypisania kopiujący (głęboka kopia)
+    Zbior& operator=(const Zbior& other) {
+        if (this != &other) {
+            zwolnij();
+            alokuj(other.m_liczbaElementow);
+            std::copy(other.m_elementy, other.m_elementy + other.m_liczbaElementow, m_elementy);
+        }
+        return *this;
+    }
+
+    // Konstruktor przenoszący
+    Zbior(Zbior&& other) noexcept : m_liczbaElementow(other.m_liczbaElementow), m_elementy(other.m_elementy) {
+        other.m_elementy = nullptr;
+        other.m_liczbaElementow = 0;
+    }
+
+    // Operator przypisania przenoszący
+    Zbior& operator=(Zbior&& other) noexcept {
+        if (this != &other) {
+            zwolnij();
+            m_liczbaElementow = other.m_liczbaElementow;
+            m_elementy = other.m_elementy;
+            other.m_elementy = nullptr;
+            other.m_liczbaElementow = 0;
+        }
+        return *this;
+    }
+
+    // Funkcja do rotacji elementów o stałą wartość (np. 2 miejsca)
+    void rotuj(size_t przesuniecie) {
+        if (m_liczbaElementow > 1) {
+            std::rotate(m_elementy, m_elementy + (przesuniecie % m_liczbaElementow), m_elementy + m_liczbaElementow);
+        }
+    }
+
+    ~Zbior() {
+        zwolnij();
+    }
+};
+
+// Klasa agregująca wiele zbiorów
+class AgregatZbiorow {
+private:
+    std::vector<Zbior> zbiory;
+    const size_t maxZbiory;
+public:
+    AgregatZbiorow(size_t maxSize) : maxZbiory(maxSize) {}
+    void dodajZbior(const Zbior& zbior) {
+        if (zbiory.size() < maxZbiory) {
+            zbiory.push_back(zbior);
+        }
+    }
+    void usunZbior() {
+        if (!zbiory.empty()) {
+            zbiory.pop_back();
+        }
+    }
+};
+
+// Funktor sprawdzający sumę elementów
+class SumChecker {
+private:
+    double limit;
+public:
+    SumChecker(double lim) : limit(lim) {}
+    bool operator()(const Zbior& zbior) {
+        double sum = 0;
+        for (size_t i = 0; i < zbior.getSize(); ++i) {
+            sum += zbior.getElement(i);
+        }
+        return sum > limit;
+    }
+};
+
+// Klasa testująca
+class Tester {
+public:
+    static void testRotacji() {
+        Zbior zbior(5, 0, 10);
+        zbior.rotuj(2);
+        std::cout << "Test rotacji wykonany." << std::endl;
+    }
+};
