@@ -1,0 +1,74 @@
+Zbior.cpp
+
+#include "zbior.h"
+#include <new>
+#include <random>
+#include <cassert>
+#include <algorithm>
+
+using namespace std;
+
+void Zbior::alokuj(int n)
+{
+	assert(n > 0);
+		m_elementy = new(std::nothrow) double[n] {};
+	m_liczbaElementow = n;
+
+}
+
+void Zbior::zwolnij()
+{
+	delete[] m_elementy;
+}
+
+Zbior::Zbior(size_t liczElem, double dGran, double gGran)
+{
+	alokuj(liczElem);
+	std::uniform_real_distribution<double> zakres(dGran, gGran);
+	std::random_device generator;
+	for (int elem = 0; elem < liczElem; elem++)
+		m_elementy[elem] = zakres(generator);
+}
+Zbior::Zbior(Zbior&& z)
+	:m_liczbaElementow(z.m_liczbaElementow)
+{
+	this->m_elementy = z.m_elementy;
+	z.m_elementy = nullptr;
+}
+Zbior& Zbior::operator=(const Zbior& z) {
+	if (this != &z) {
+		if (this->m_elementy != nullptr && (this->m_liczbaElementow != z.m_liczbaElementow)) zwolnij();
+		if (z.m_elementy != nullptr) {
+			if (this->m_liczbaElementow != z.m_liczbaElementow) alokuj(z.m_liczbaElementow);
+			for (int i = 0; i < z.m_liczbaElementow; i++) {
+				this->m_elementy[i] = z.m_elementy[i];
+			}
+			this->m_liczbaElementow = z.m_liczbaElementow;
+		}
+	}
+	
+	rotate(this->m_elementy, this->m_elementy + 2, this->m_elementy+this->m_liczbaElementow);
+	return *this;
+}
+
+
+Zbior.h
+
+
+#pragma once
+class Zbior
+{
+	size_t m_liczbaElementow = 0;
+	double* m_elementy = nullptr;
+	double m_dolnaGranica = 0;
+	double m_gornaGranica = 0;
+	void alokuj(int);
+	void zwolnij();
+public:
+	Zbior(size_t liczElem, double dGran, double gGran);
+	Zbior(Zbior&& z);
+	Zbior(Zbior& z)=delete;
+	Zbior& operator=(const Zbior& z);
+	Zbior& operator=(Zbior&& z)=delete;
+	~Zbior() {}
+};
